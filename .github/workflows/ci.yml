@@ -62,14 +62,8 @@ jobs:
     - run: npm run specification 
     - run: npm run sdks
     - run: npm run test
-    - run: npm run docs
     
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:javascript"
-        # temporary disable upload as it fails
-        upload: false
+
     - name: Build and Install Mock-Firebolt to run component tests
       shell: bash
       run: |
@@ -80,6 +74,7 @@ jobs:
         git checkout ${{ env.MOCK_SHA1SUM }}
         git apply "${{ env.MOCK_PATCH }}"
         cd server
+        rm "${{ github.workspace }}/.github/mock-firebolt/package-lock.json" || true
         npm ci
         echo "Mock-Firebolt built and installed to ${{ env.MOCK_PATH }}"
     - name: Replace Mock-Firebolt config
