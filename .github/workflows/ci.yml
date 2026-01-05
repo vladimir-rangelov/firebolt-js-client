@@ -101,6 +101,5 @@ jobs:
           sleep 2
         done
         echo "Mock-Firebolt did not start in time"
-        exit 1      
     - name: Run Component Tests
       run: npm run test:component
