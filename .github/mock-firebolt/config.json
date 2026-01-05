@@ -13,7 +13,7 @@
       "cliFlag": null,
       "cliShortFlag": null,
       "url_Note": "Can be changed to test different versions of the firebolt-open-rpc",
-      "fileName": "../dist/firebolt-open-rpc.json",
+      "fileName": "../../dist/firebolt-open-rpc.json",
       "enabled": true
     },
     {
@@ -30,7 +30,7 @@
       "cliFlag": null,
       "cliShortFlag": null,
       "url_Note": "URL for toApp OpenRPC (Firebolt 2.0 event/provider spec)",
-      "fileName": "../dist/firebolt-app-open-rpc.json",
+      "fileName": "../../dist/firebolt-app-open-rpc.json",
       "enabled": true
     },
     {
