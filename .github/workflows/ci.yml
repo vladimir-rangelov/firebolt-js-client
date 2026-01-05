@@ -74,8 +74,7 @@ jobs:
         git checkout ${{ env.MOCK_SHA1SUM }}
         git apply "${{ env.MOCK_PATCH }}"
         cd server
-        rm "${{ github.workspace }}/mock-firebolt/package-lock.json" || true
-        npm ci
+        npm install --no-audit --no-fund
         echo "Mock-Firebolt built and installed to ${{ env.MOCK_PATH }}"
     - name: Replace Mock-Firebolt config
       shell: bash
