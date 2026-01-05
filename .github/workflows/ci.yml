@@ -1,16 +1,16 @@
 # This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: CI (Node.js) Build and Test
 
 on:
   workflow_dispatch:
   push:
-    branches-ignore: [ main ]
+    branches: [ main, next ]
   pull_request:
     types:
       - opened
-    branches: [ main ]
+    branches: [ main, next ]
 
 permissions:
   contents: read   # minimal token permissions
@@ -20,7 +20,9 @@ permissions:
   statuses: write
 env:
   HUSKY: 0
-  # Turns off installing commit hooks in CI environments
+  MOCK_PATH: ${{ github.workspace }}/mock-firebolt
+  MOCK_SHA1SUM: cf0c4b35b5f3997bd9e6f82a18d57eafa0c62192
+  MOCK_PATCH: ${{ github.workspace }}/.github/mock-firebolt/events.patch
 
 jobs:
   build:
@@ -67,4 +69,44 @@ jobs:
       with:
         category: "/language:javascript"
         # temporary disable upload as it fails
-        upload: false 
+        upload: false
+    - name: Build and Install Mock-Firebolt to run component tests
+      shell: bash
+      run: |
+        echo "Building Mock-Firebolt..."
+        git clone --depth 1 --branch main https://github.com/rdkcentral/mock-firebolt.git ${{ env.MOCK_PATH }}
+        cd ${{ env.MOCK_PATH }}
+        git fetch --shallow-since=2025-11-01
+        git checkout ${{ env.MOCK_SHA1SUM }}
+        git apply "${{ env.MOCK_PATCH }}"
+        cd server
+        npm ci
+        echo "Mock-Firebolt built and installed to ${{ env.MOCK_PATH }}"
+    - name: Replace Mock-Firebolt config
+      shell: bash
+      run: |
+        echo "Replacing Mock-Firebolt config..."
+        cp "${{ github.workspace }}/.github/mock-firebolt/config.json" \
+           "${{ env.MOCK_PATH }}/server/config.json"
+        echo "Config replaced"        
+    - name: Start Mock-Firebolt
+      shell: bash
+      run: |
+        cd ${{ env.MOCK_PATH }}/server
+        npm start > mock-firebolt.log 2>&1 &
+        echo $! > mock-firebolt.pid
+    - name: Wait for Mock-Firebolt to be ready
+      shell: bash
+      run: |
+        echo "Waiting for Mock-Firebolt..."
+        for i in {1..30}; do
+          if curl -s http://localhost:9998/health > /dev/null; then
+            echo "Mock-Firebolt is up"
+            exit 0
+          fi
+          sleep 2
+        done
+        echo "Mock-Firebolt did not start in time"
+        exit 1      
+    - name: Run Component Tests
+      run: npm run test:component
