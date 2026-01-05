@@ -102,4 +102,8 @@ jobs:
         done
         echo "Mock-Firebolt did not start in time"
     - name: Run Component Tests
+      shell: bash
+      # change the directory to the github workspace
+      cd ${{ github.workspace }}
+      working-directory: ${{ github.workspace }}  
       run: npm run test:component
