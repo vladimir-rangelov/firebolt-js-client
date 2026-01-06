@@ -80,7 +80,7 @@ jobs:
       run: |
         echo "Replacing Mock-Firebolt config..."
         cp "${{ github.workspace }}/.github/mock-firebolt/config.json" \
-           "${{ env.MOCK_PATH }}/server/src/config.json"
+           "${{ env.MOCK_PATH }}/server/src/.mf.config.json"
         echo "Config replaced"        
     - name: Start Mock-Firebolt
       shell: bash
