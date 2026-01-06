@@ -62,7 +62,6 @@ jobs:
     - run: npm run specification 
     - run: npm run sdks
     - run: npm run test
-    
 
     - name: Build and Install Mock-Firebolt to run component tests
       shell: bash
@@ -87,19 +86,13 @@ jobs:
       shell: bash
       run: |
         cd ${{ env.MOCK_PATH }}/server
-        npm start > mock-firebolt.log 2>&1 &
+        npm start &
         echo $! > mock-firebolt.pid
+        cat mock-firebolt.pid
     - name: Wait for Mock-Firebolt to be ready
       shell: bash
       run: |
-        echo "Waiting for Mock-Firebolt..."
-        for i in {1..30}; do
-          if curl -s http://localhost:9998/health > /dev/null; then
-            echo "Mock-Firebolt is up"
-            exit 0
-          fi
-          sleep 2
-        done
+        sleep 2
         echo "Mock-Firebolt did not start in time"
     - name: Run Component Tests
       working-directory: ${{ github.workspace }} 
