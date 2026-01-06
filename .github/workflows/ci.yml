@@ -63,37 +63,9 @@ jobs:
     - run: npm run sdks
     - run: npm run test
 
-    - name: Build and Install Mock-Firebolt to run component tests
-      shell: bash
-      run: |
-        echo "Building Mock-Firebolt..."
-        git clone --depth 1 --branch main https://github.com/rdkcentral/mock-firebolt.git ${{ env.MOCK_PATH }}
-        cd ${{ env.MOCK_PATH }}
-        git fetch --shallow-since=2025-11-01
-        git checkout ${{ env.MOCK_SHA1SUM }}
-        git apply "${{ env.MOCK_PATCH }}"
-        cd server
-        npm install --no-audit --no-fund
-        echo "Mock-Firebolt built and installed to ${{ env.MOCK_PATH }}"
-    - name: Replace Mock-Firebolt config
-      shell: bash
-      run: |
-        echo "Replacing Mock-Firebolt config..."
-        cp "${{ github.workspace }}/.github/mock-firebolt/config.json" \
-           "${{ env.MOCK_PATH }}/server/src/.mf.config.json"
-        echo "Config replaced"        
-    - name: Start Mock-Firebolt
-      shell: bash
-      run: |
-        cd ${{ env.MOCK_PATH }}/server
-        npm start &
-        echo $! > mock-firebolt.pid
-        cat mock-firebolt.pid
-    - name: Wait for Mock-Firebolt to be ready
-      shell: bash
-      run: |
-        sleep 2
-        echo "Mock-Firebolt did not start in time"
+    - name: Setup Mock-Firebolt
+      run: bash .github/scripts/mock-firebolt.sh
+      
     - name: Run Component Tests
       working-directory: ${{ github.workspace }} 
       shell: bash
