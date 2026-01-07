@@ -29,18 +29,18 @@
     "version": "node ./src/js/version.mjs sync",
     "dev:setup": "husky install",
     "publish:docs": "node ./src/js/github.io/index.mjs --output",
-    "release-notes": "npx semantic-release --dry-run --repository-url git@github.com:rdkcentral/firebolt-js-client.git --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator",
+    "release-notes": "npx semantic-release --dry-run --repository-url git@github.com:vladimir-rangelov/firebolt-js-client.git --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator",
     "prepack": "npm run dist"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://github.com/rdkcentral/firebolt-js-client.git"
+    "url": "ssh://github.com/vladimir-rangelov/firebolt-js-client.git"
   },
   "author": "",
   "bugs": {
-    "url": "https://github.com/rdkcentral/firebolt-js-client/issues"
+    "url": "https://github.com/vladimir-rangelov/firebolt-js-client/issues"
   },
-  "homepage": "https://github.com/rdkcentral/firebolt-js-client#readme",
+  "homepage": "https://github.com/vladimir-rangelov/firebolt-js-client#readme",
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
